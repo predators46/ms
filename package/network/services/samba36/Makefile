@@ -49,6 +49,13 @@ define Package/samba36-client
   DEPENDS:=+libreadline +libncurses
 endef
 
+define Package/samba36-libsmbclient
+  $(call Package/samba/Default)
+  SECTION:=libs
+  CATEGORY:=Libraries
+  TITLE:=Samba 3.6 SMB/CIFS client library
+endef
+
 define Package/samba36-net
   $(call Package/samba/Default)
   TITLE+= net commands
@@ -58,7 +65,7 @@ endef
 define Package/samba36-server/config
 	config PACKAGE_SAMBA_MAX_DEBUG_LEVEL
 		int "Maximum level of compiled-in debug messages"
-		depends on PACKAGE_samba36-server || PACKAGE_samba36-client
+		depends on PACKAGE_samba36-server || PACKAGE_samba36-client || PACKAGE_samba36-libsmbclient
 		default -1
 endef
 
@@ -69,7 +76,13 @@ define Package/samba36-server/description
  to as the LanManager or Netbios protocol.
 endef
 
-TARGET_CFLAGS += -DMAX_DEBUG_LEVEL=$(CONFIG_PACKAGE_SAMBA_MAX_DEBUG_LEVEL) -D__location__=\\\"\\\" -ffunction-sections -fdata-sections
+TARGET_CFLAGS += \
+	$(FPIC) \
+	-DMAX_DEBUG_LEVEL=$(CONFIG_PACKAGE_SAMBA_MAX_DEBUG_LEVEL) \
+	-D__location__=\\\"\\\" \
+	-fdata-sections \
+	-ffunction-sections
+
 TARGET_LDFLAGS += -Wl,--gc-sections
 
 CONFIGURE_VARS += \
@@ -112,6 +125,7 @@ CONFIGURE_ARGS += \
 	--with-configdir=/etc/samba \
 	--with-included-iniparser \
 	--with-included-popt \
+	--with-libsmbclient \
 	--with-lockdir=/var/lock \
 	--with-logfilebase=/var/log \
 	--with-nmbdsocketdir=/var/nmbd \
@@ -128,7 +142,6 @@ CONFIGURE_ARGS += \
 	--without-libtdb \
 	--without-libtalloc \
 	--without-libnetapi \
-	--without-libsmbclient \
 	--without-libsmbsharemodes \
 	--without-libtevent \
 	--without-libaddns \
@@ -140,6 +153,12 @@ define Package/samba36-server/conffiles
 /etc/config/samba
 /etc/samba/smb.conf.template
 /etc/samba/smbpasswd
+endef
+
+define Build/InstallDev
+	$(INSTALL_DIR) $(1)/usr/include $(1)/usr/lib
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/source3/include/libsmbclient.h $(1)/usr/include
+	$(INSTALL_BIN) $(PKG_BUILD_BIN)/libsmbclient.{a,so*} $(1)/usr/lib
 endef
 
 define Package/samba36-server/install
@@ -165,6 +184,11 @@ define Package/samba36-client/install
 	$(INSTALL_BIN) $(PKG_BUILD_BIN)/nmblookup $(1)/usr/sbin
 endef
 
+define Package/samba36-libsmbclient/install
+	$(INSTALL_DIR) $(1)/usr/lib
+	$(INSTALL_BIN) $(PKG_BUILD_BIN)/libsmbclient.so* $(1)/usr/lib
+endef
+
 define Package/samba36-net/install
 	$(INSTALL_DIR) $(1)/usr/sbin
 	$(INSTALL_BIN) $(PKG_BUILD_BIN)/net $(1)/usr/sbin
@@ -172,5 +196,5 @@ endef
 
 $(eval $(call BuildPackage,samba36-client))
 $(eval $(call BuildPackage,samba36-server))
+$(eval $(call BuildPackage,samba36-libsmbclient))
 $(eval $(call BuildPackage,samba36-net))
-
