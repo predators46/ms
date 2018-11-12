@@ -13,7 +13,8 @@ case "$board" in
 cubox-i |\
 *gw51xx |\
 *gw52xx |\
-*gw5904)
+*gw5904 |\
+udoo)
 	ucidef_set_interface_lan 'eth0'
 	;;
 *gw53xx |\

@@ -295,6 +295,23 @@ endef
 
 $(eval $(call KernelPackage,drm-amdgpu))
 
+define KernelPackage/drm-etnaviv
+  SUBMENU:=$(VIDEO_MENU)
+  TITLE:=Vivante DRM support
+  DEPENDS:=@TARGET_imx6 +kmod-drm +kmod-thermal
+  KCONFIG:= \
+	CONFIG_CMA=y \
+	CONFIG_DRM_ETNAVIV \
+	CONFIG_DRM_ETNAVIV_THERMAL=y
+  FILES:=$(LINUX_DIR)/drivers/gpu/drm/etnaviv/etnaviv.ko
+AUTOLOAD:=$(call AutoProbe,etnaviv)
+endef
+
+define KernelPackage/drm-etnaviv/description
+  DRM Driver for Vivante GPUs
+endef
+
+$(eval $(call KernelPackage,drm-etnaviv))
 
 define KernelPackage/drm-imx
   SUBMENU:=$(VIDEO_MENU)
@@ -313,7 +330,8 @@ define KernelPackage/drm-imx
 	CONFIG_DRM_IMX_PARALLEL_DISPLAY=n \
 	CONFIG_DRM_IMX_TVE=n \
 	CONFIG_DRM_IMX_LDB=n \
-	CONFIG_DRM_IMX_HDMI=n
+	CONFIG_DRM_IMX_HDMI=n \
+	CONFIG_VIDEOMODE_HELPERS
   FILES:= \
 	$(LINUX_DIR)/drivers/gpu/drm/imx/imxdrm.ko \
 	$(LINUX_DIR)/drivers/gpu/ipu-v3/imx-ipu-v3.ko

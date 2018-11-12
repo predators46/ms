@@ -41,6 +41,10 @@ platform_check_image() {
 		nand_do_platform_check $board $1
 		return $?;
 		;;
+	udoo)
+		blkdev_check_image "$1"
+		return $?;
+		;;
 	esac
 
 	echo "Sysupgrade is not yet supported on $board."
@@ -56,6 +60,9 @@ platform_do_upgrade() {
 		;;
 	*gw5*)
 		nand_do_upgrade "$1"
+		;;
+	udoo)
+		blkdev_do_upgrade "$1"
 		;;
 	esac
 }

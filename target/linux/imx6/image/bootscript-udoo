@@ -1,0 +1,28 @@
+echo "UDOO OpenWrt Boot script"
+
+# Set console variable for both UART and HDMI
+setenv console console=ttymxc1,115200 video=mxcfb0:dev=hdmi,1920x1080M@60,if=RGB24,bpp=32
+
+# Find correct dtb
+if test ${board_rev} = MX6DL; then
+	setenv fdt_soc_type imx6dl;
+elif test ${board_rev} = MX6Q; then
+	setenv fdt_soc_type imx6q;
+fi
+
+setenv fdt_name ${fdt_soc_type}-udoo.dtb;
+
+# Set correct devtype and partition
+if test ${devtype} != mmc; then setenv devtype mmc; fi
+if mmc dev 0; then
+	setenv mmcdev 0
+elif mmc dev 1; then
+	setenv mmcdev 1
+fi
+
+# Boot from the SD card is supported at the moment
+setenv bootargs "${console} root=/dev/mmcblk0p2 rw rootwait"
+mmc dev ${mmcdev}
+load ${devtype} ${mmcdev}:${devplist} ${loadaddr} /uImage
+load ${devtype} ${mmcdev}:${devplist} ${fdt_addr} /${fdt_name}
+bootz ${loadaddr} - ${fdt_addr}

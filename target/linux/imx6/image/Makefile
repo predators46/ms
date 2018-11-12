@@ -223,4 +223,19 @@ define Device/apalis
 endef
 TARGET_DEVICES += apalis
 
+define Device/udoo
+  BOOT_SCRIPT = bootscript-udoo
+  DEVICE_DTS := imx6dl-udoo imx6q-udoo
+  DEVICE_TITLE := UDOO Dual/Quad
+  DEVICE_PACKAGES := \
+	kmod-drm-imx kmod-drm-imx-hdmi kmod-rt2800-usb kmod-sound-soc-imx \
+	kmod-usb-hid wpad
+  IMAGES := combined.bin
+  IMAGE/combined.bin := append-rootfs | pad-extra 128k | imx6-sdcard
+  KERNEL := kernel-bin | install-dtb
+  KERNEL_LOADADDR := 0x12000000
+  UBOOT := udoo
+endef
+TARGET_DEVICES += udoo
+
 $(eval $(call BuildImage))

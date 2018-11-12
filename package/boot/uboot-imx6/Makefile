@@ -62,6 +62,13 @@ define U-Boot/nitrogen6s1g
   NAME:=Nitrogen6x i.MX6Solo 1GB board
 endef
 
+define U-Boot/udoo
+  NAME:=UDOO Dual/Quad
+  BUILD_DEVICES:=udoo
+  UBOOT_IMAGE:=SPL u-boot.img
+  UBOOT_MAKE_FLAGS:=SPL u-boot.img
+endef
+
 define U-Boot/wandboard
   NAME:=Wandboard Dual Lite/Quad/Solo
   BUILD_DEVICES:=wandboard
@@ -77,6 +84,7 @@ UBOOT_TARGETS := \
 	nitrogen6q2g \
 	nitrogen6s \
 	nitrogen6s1g \
+	udoo \
 	wandboard
 
 UBOOT_MAKE_FLAGS += u-boot.imx
