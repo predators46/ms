@@ -19,6 +19,11 @@ define Package/arm-trusted-firmware-meson/Default
     DEPENDS:=@TARGET_mesongx
 endef
 
+define Package/arm-trusted-firmware-meson-g12a
+    $(call Package/arm-trusted-firmware-meson/Default)
+    VARIANT:=g12a
+endef
+
 define Package/arm-trusted-firmware-meson-gxbb
     $(call Package/arm-trusted-firmware-meson/Default)
     VARIANT:=gxbb

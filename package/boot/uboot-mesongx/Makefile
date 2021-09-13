@@ -25,6 +25,12 @@ define U-Boot/odroid-c2
   DEPENDS:=+PACKAGE_u-boot-odroid-c2:arm-trusted-firmware-meson-gxbb
 endef
 
+define U-Boot/odroid-n2
+  TITLE:=ODROID N2
+  BUILD_DEVICES:=odroid-n2
+  DEPENDS:=+PACKAGE_u-boot-odroid-n2:arm-trusted-firmware-meson-g12a
+endef
+
 UBOOT_TARGETS:= \
 	odroid-c2
 
