@@ -21,7 +21,6 @@ PKG_LICENSE:=LGPL-2.1-or-later
 PKG_LICENSE_FILES:=COPYING
 PKG_CPE_ID:=cpe:/a:paul_kranenburg:strace
 
-PKG_FIXUP:=autoreconf
 PKG_INSTALL:=1
 
 PKG_CONFIG_DEPENDS := \
