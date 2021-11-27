@@ -1,0 +1,43 @@
+From 16af672221af73d00565bec0fe11ccb051aa3443 Mon Sep 17 00:00:00 2001
+From: Stijn Tintel <stijn@linux-ipv6.be>
+Date: Sat, 27 Nov 2021 03:21:33 +0200
+Subject: [PATCH] parser: allow quoted string in flowtable_expr_member
+
+Devices with interface names starting with a digit can not be configured
+in flowtables. Trying to do so throws the following error:
+
+Error: syntax error, unexpected number, expecting comma or '}'
+devices = { eth0, 6in4-wan6 };
+
+This is however a perfectly valid interface name. Solve the issue by
+allowing the use of quoted strings.
+
+Suggested-by: Jo-Philipp Wich <jo@mein.io>
+Signed-off-by: Stijn Tintel <stijn@linux-ipv6.be>
+---
+ src/parser_bison.y | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/src/parser_bison.y b/src/parser_bison.y
+index 81d75ecb..f455eb16 100644
+--- a/src/parser_bison.y
++++ b/src/parser_bison.y
+@@ -2140,7 +2140,14 @@ flowtable_list_expr	:	flowtable_expr_member
+ 			|	flowtable_list_expr	COMMA	opt_newline
+ 			;
+ 
+-flowtable_expr_member	:	STRING
++flowtable_expr_member	:	QUOTED_STRING
++			{
++				$$ = constant_expr_alloc(&@$, &string_type,
++							 BYTEORDER_HOST_ENDIAN,
++							 strlen($1) * BITS_PER_BYTE, $1);
++				xfree($1);
++			}
++			|	STRING
+ 			{
+ 				$$ = constant_expr_alloc(&@$, &string_type,
+ 							 BYTEORDER_HOST_ENDIAN,
+-- 
+2.32.0
+
