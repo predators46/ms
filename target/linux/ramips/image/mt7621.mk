@@ -1371,6 +1371,21 @@ define Device/tplink_eap235-wall-v1
 endef
 TARGET_DEVICES += tplink_eap235-wall-v1
 
+define Device/tplink_eap615-wall-v1
+  $(Device/tplink-safeloader)
+  DEVICE_MODEL := EAP615-Wall
+  DEVICE_VARIANT := v1
+  DEVICE_PACKAGES := kmod-mt7915e
+  TPLINK_BOARD_ID := EAP615-WALL-V1
+  KERNEL := kernel-bin | lzma | fit lzma $$(KDIR)/image-$$(firstword $$(DEVICE_DTS)).dtb
+  # tried, doesn't work
+  #KERNEL := kernel-bin | lzma | fit lzma $$(KDIR)/image-$$(firstword $$(DEVICE_DTS)).dtb | tplink-v1-header -e -O
+  #KERNEL := kernel-bin | lzma | tplink-v1-header -e -O | fit lzma $$(KDIR)/image-$$(firstword $$(DEVICE_DTS)).dtb
+  KERNEL_INITRAMFS := kernel-bin | lzma | fit lzma $$(KDIR)/image-$$(firstword $$(DEVICE_DTS)).dtb with-initrd | pad-to 64k
+  IMAGE_SIZE := 13248k
+endef
+TARGET_DEVICES += tplink_eap615-wall-v1
+
 define Device/tplink_re350-v1
   $(Device/dsa-migration)
   $(Device/tplink-safeloader)
